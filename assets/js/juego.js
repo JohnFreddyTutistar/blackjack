@@ -5,17 +5,18 @@
  * H: hearts = Corazones
  * E: spades = Espadas
 */
-const tipos = [ 'C', 'D', 'H', 'S' ]
-// Cartas especiales
+const tipos      = [ 'C', 'D', 'H', 'S' ]
 const especiales = ['A', 'J', 'Q', 'K']
 
-let puntosJugador = 0;
-    puntosComputadora = 0;
+let puntosJugador      = 0;
+    puntosComputadora  = 0;
 
 // Referencias del HTML
-const mostrarPuntos = document.querySelectorAll('small');
-const divCartasJugador = document.querySelector('#jugador-cartas')
-const divCartasComputadora = document.querySelector('#computador-cartas')
+const mostrarPuntos         = document.querySelectorAll('small');
+const divCartasJugador      = document.querySelector('#jugador-cartas')
+const divCartasComputadora  = document.querySelector('#computador-cartas')
+const btnDetener            = document.querySelector('#btnDetener');
+const btnNuevo              = document.querySelector('#btnNuevo');
 
 let deck = [];
 
@@ -67,7 +68,7 @@ const valorCarta = ( carta ) => {
 const valor = valorCarta( pedirCarta() );
 
 // Turno de la computadora
-const turnoComputadore = ( puntosMinimos ) => {
+const turnoComputadora = ( puntosMinimos ) => {
 
      do {
         const carta = pedirCarta()
@@ -105,15 +106,62 @@ btnPedir.addEventListener('click', () => {
     divCartasJugador.append(imgCarta)
 
     if( puntosJugador>21 ){
-        console.warn('perdiste')
-        btnPedir.disabled = true
-        turnoComputadore()
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Perdiste, intentalo nuevamente",
+        });
+        btnPedir.disabled   = true
+        btnDetener.disabled = true;
+        turnoComputadora( puntosJugador )
     } else if (puntosJugador === 21) {
+        Swal.fire({
+            title: "Drag me!",
+            icon: "success",
+            draggable: true
+        });
         console.warn('genial')
-        btnPedir.disabled = true
+        btnPedir.disabled   = true
+        btnDetener.disabled = true;
+        turnoComputadora( puntosJugador )
     }
 
 
+})
+
+// función para detener el juego
+btnDetener.addEventListener('click', () => {
+
+    if(puntosJugador <= 21){ 
+        btnDetener.disabled = true;
+        btnPedir.disabled = true;
+        turnoComputadora( puntosJugador )
+        if( puntosComputadora === puntosJugador ) {
+            Swal.fire({
+                title: "Empate. nadie gana",
+                icon: "alert",
+                draggable: true
+            });
+        } else if( (puntosComputadora > puntosJugador)  && (puntosComputadora <= 21) ){
+            Swal.fire({
+                title: "Conputadora gana",
+                icon: "success",
+                draggable: true
+            });
+        } else {
+            Swal.fire({
+                title: "Felicitaciones, jugador gana",
+                icon: "success",
+                draggable: true
+            });
+        }
+    }
+
+})
+
+// Función nuevo juego
+btnNuevo.addEventListener('click', () => {
+    location.reload()
 })
 
 
